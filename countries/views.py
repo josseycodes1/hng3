@@ -145,6 +145,15 @@ class CountryListView(generics.ListAPIView):
     serializer_class = CountrySerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["estimated_gdp", "population", "name"]
+    
+    def post(self, request):
+        serializer = CountrySerializer(data=request.data)
+        if serializer.is_valid():
+            # For testing purposes, we don't actually save
+            return Response({"message": "Validation passed"}, status=status.HTTP_200_OK)
+        else:
+            # This will trigger our custom exception handler for 400 errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -216,3 +225,8 @@ class DebugImageView(APIView):
             debug_info["file_size"] = os.path.getsize(path)
         
         return Response(debug_info)
+
+class Test500ErrorView(APIView):
+    def get(self, request):
+        # This will intentionally cause a 500 error for testing
+        raise Exception("This is a test 500 error")

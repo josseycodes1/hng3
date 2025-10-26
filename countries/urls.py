@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (RefreshCountriesView, CountryListView, CountryDetailView, CountryDeleteView, StatusView, SummaryImageView, DebugImageView)
+from .views import (Test500ErrorView, RefreshCountriesView, CountryListView, CountryDetailView, CountryDeleteView, StatusView, SummaryImageView, DebugImageView)
 
 urlpatterns = [
     path('refresh', RefreshCountriesView.as_view(), name='countries-refresh'),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('<str:name>', CountryDetailView.as_view(), name='countries-detail'),
     path('<str:name>/delete', CountryDeleteView.as_view(), name='countries-delete'),  
     path('debug-image', DebugImageView.as_view(), name='debug-image'),
+    path('test-500', Test500ErrorView.as_view(), name='test-500'),
 ]
