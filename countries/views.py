@@ -20,6 +20,7 @@ from .utils import generate_summary_image
 from rest_framework import status
 import os
 from django.conf import settings
+from rest_framework import serializers
 
 logger = logging.getLogger(__name__)
 
@@ -152,8 +153,8 @@ class CountryListView(generics.ListAPIView):
             # For testing purposes, we don't actually save
             return Response({"message": "Validation passed"}, status=status.HTTP_200_OK)
         else:
-            # This will trigger our custom exception handler for 400 errors
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Instead of returning Response, raise ValidationError to let the custom handler format it
+            raise serializers.ValidationError(serializer.errors)
 
     def get_queryset(self):
         qs = super().get_queryset()
