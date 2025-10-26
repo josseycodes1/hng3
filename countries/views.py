@@ -139,27 +139,18 @@ class RefreshCountriesView(APIView):
             }
         )
 
-
 class CountryListView(generics.ListAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["estimated_gdp", "population", "name"]
-    
-    def post(self, request):
-        serializer = CountrySerializer(data=request.data)
-        if serializer.is_valid():
-            # For testing purposes, we don't actually save
-            return Response({"message": "Validation passed"}, status=status.HTTP_200_OK)
-        else:
-            # Instead of returning Response, raise ValidationError to let the custom handler format it
-            raise serializers.ValidationError(serializer.errors)
 
     def get_queryset(self):
         qs = super().get_queryset()
         region = self.request.query_params.get("region")
         currency = self.request.query_params.get("currency")
         sort = self.request.query_params.get("sort")
+        
         if region:
             qs = qs.filter(region__iexact=region)
         if currency:
@@ -203,10 +194,9 @@ class CountryDetailView(generics.RetrieveAPIView):
         name = self.kwargs["name"]
         obj = get_object_or_404(Country, name__iexact=name)
         return obj
-
-
-class CountryDeleteView(APIView):
-    def delete(self, request, name):
+    
+    def delete(self, request, *args, **kwargs):
+        name = self.kwargs["name"]
         obj = Country.objects.filter(name__iexact=name).first()
         if not obj:
             return Response({"error": "Country not found"}, status=status.HTTP_404_NOT_FOUND)
