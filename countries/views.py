@@ -18,6 +18,8 @@ from .models import Country
 from .serializers import CountrySerializer
 from .utils import generate_summary_image
 from rest_framework import status
+import os
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -122,9 +124,10 @@ class RefreshCountriesView(APIView):
 
         # generate the summary image (outside the transaction)
         try:
-            img_path = generate_summary_image()  # should save to cache/summary.png by default
-        except Exception:
-            logger.exception("Failed to generate summary image")
+            img_path = generate_summary_image()
+            logger.info(f"Summary image generated at: {img_path}")
+        except Exception as e:
+            logger.exception(f"Failed to generate summary image: {str(e)}")
 
         total = Country.objects.count()
         last = Country.objects.order_by("-last_refreshed_at").first()
@@ -191,7 +194,25 @@ class StatusView(APIView):
 
 class SummaryImageView(APIView):
     def get(self, request):
-        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "cache", "summary.png")
+        path = os.path.join(settings.BASE_DIR, 'cache', 'summary.png')
         if not os.path.exists(path):
             return Response({"error": "Summary image not found"}, status=status.HTTP_404_NOT_FOUND)
         return FileResponse(open(path, "rb"), content_type="image/png")
+
+class DebugImageView(APIView):
+    def get(self, request):
+        path = os.path.join(settings.BASE_DIR, 'cache', 'summary.png')
+        cache_dir = os.path.join(settings.BASE_DIR, 'cache')
+        
+        debug_info = {
+            "cache_dir_exists": os.path.exists(cache_dir),
+            "image_exists": os.path.exists(path),
+            "cache_dir_path": cache_dir,
+            "image_path": path,
+            "base_dir": str(settings.BASE_DIR)
+        }
+        
+        if os.path.exists(path):
+            debug_info["file_size"] = os.path.getsize(path)
+        
+        return Response(debug_info)
