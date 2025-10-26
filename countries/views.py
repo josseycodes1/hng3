@@ -17,10 +17,9 @@ from PIL import Image, ImageDraw
 from .models import Country
 from .serializers import CountrySerializer
 from .utils import generate_summary_image
-from rest_framework import status
 import os
 from django.conf import settings
-from rest_framework import serializers
+from rest_framework import serializers, status, filters
 
 logger = logging.getLogger(__name__)
 
