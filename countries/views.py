@@ -16,7 +16,8 @@ import requests
 from PIL import Image, ImageDraw
 from .models import Country
 from .serializers import CountrySerializer
-from .utils import generate_summary_image 
+from .utils import generate_summary_image
+from rest_framework import status
 
 logger = logging.getLogger(__name__)
 
