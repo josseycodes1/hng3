@@ -198,7 +198,7 @@ class SummaryImageView(APIView):
         if not os.path.exists(path):
             return Response({"error": "Summary image not found"}, status=status.HTTP_404_NOT_FOUND)
         return FileResponse(open(path, "rb"), content_type="image/png")
-
+    
 class DebugImageView(APIView):
     def get(self, request):
         path = os.path.join(settings.BASE_DIR, 'cache', 'summary.png')
