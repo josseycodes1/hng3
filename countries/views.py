@@ -43,7 +43,7 @@ class RefreshCountriesView(APIView):
     Fetch countries and exchange rates, then upsert to DB and generate summary image.
     """
     def post(self, request):
-        # Fetch external data
+        
         try:
             countries_data = fetch_external(RESTCOUNTRIES_URL)
         except Exception:
@@ -61,7 +61,7 @@ class RefreshCountriesView(APIView):
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
-        # Process inside transaction: rollback on any exception
+       
         try:
             with transaction.atomic():
                 for c in countries_data:
@@ -72,7 +72,7 @@ class RefreshCountriesView(APIView):
                     flag_url = c.get("flag")
                     currencies = c.get("currencies") or []
 
-                    # currency handling
+                   
                     if currencies and isinstance(currencies, list) and len(currencies) > 0:
                         cur0 = currencies[0]
                         currency_code = cur0.get("code") if isinstance(cur0, dict) else None
@@ -93,7 +93,7 @@ class RefreshCountriesView(APIView):
                         exchange_rate = None
                         estimated_gdp = 0.0
 
-                    # Case-insensitive upsert: try to find existing by name (iexact), else create
+                   
                     existing = Country.objects.filter(name__iexact=name).first()
                     if existing:
                         existing.name = name
@@ -116,13 +116,13 @@ class RefreshCountriesView(APIView):
                             estimated_gdp=float(estimated_gdp),
                             flag_url=flag_url,
                         )
-            # commit happened
+         
         except Exception:
             logger.exception("Failed during DB upsert in refresh")
-            # transaction.atomic() will rollback automatically
+           
             return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # generate the summary image (outside the transaction)
+       
         try:
             img_path = generate_summary_image()
             logger.info(f"Summary image generated at: {img_path}")
@@ -166,17 +166,17 @@ class CountryListView(generics.ListAPIView):
         if serializer.is_valid():
             return Response({"message": "Validation passed"}, status=status.HTTP_200_OK)
         else:
-            # Transform the error messages to remove arrays and match assignment format
+           
             transformed_errors = {}
             for field, messages in serializer.errors.items():
                 if messages:
-                    # Extract the message from the array and use simple string
+                   
                     if isinstance(messages, list) and len(messages) > 0:
-                        # If it's already the simple format we want, use it directly
+                       
                         if messages[0] == "is required":
                             transformed_errors[field] = "is required"
                         else:
-                            # Otherwise, transform to simple format
+                            
                             transformed_errors[field] = "is required"
                     else:
                         transformed_errors[field] = "is required"
@@ -240,5 +240,5 @@ class DebugImageView(APIView):
 
 class Test500ErrorView(APIView):
     def get(self, request):
-        # This will intentionally cause a 500 error for testing
+        
         raise Exception("This is a test 500 error")

@@ -14,10 +14,10 @@ def generate_summary_image(path=None):
     top5 = Country.objects.order_by('-estimated_gdp')[:5]
     timestamp = datetime.now(timezone.utc).isoformat()
 
-    # Simple image: white background, black text
+   
     img = Image.new('RGB', (1200, 600), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
-    # You might need a ttf font file path. We'll use default
+    
     title = f"Countries cached: {total}"
     d.text((20, 20), title, fill=(0,0,0))
     d.text((20, 60), f"Last refreshed: {timestamp}", fill=(0,0,0))

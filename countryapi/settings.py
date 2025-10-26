@@ -94,9 +94,6 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# -----------------------
-# Default primary key field type
-# -----------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
@@ -108,9 +105,6 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'countries.exceptions.custom_exception_handler',
 }
 
-# -----------------------
-# Logging
-# -----------------------
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -132,14 +126,12 @@ LOGGING = {
     },
     "root": {"handlers": ["console", "file"], "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO")},
     "loggers": {
-        # Silence very verbose third-party logs unless needed
+       
         "django.db.backends": {"level": "WARNING", "handlers": ["console"], "propagate": False},
     },
 }
 
-# -----------------------
-# Cache (simple file cache for the summary image etc.)
-# -----------------------
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
@@ -147,36 +139,18 @@ CACHES = {
     }
 }
 
-# -----------------------
-# Other useful settings & helpers
-# -----------------------
-# Directory for cached images (summary.png)
+
 CACHE_DIR = BASE_DIR / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Keep the list of trusted origins for CSRF (if you use different hostnames)
+
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("CSRF_TRUSTED_ORIGINS") else []
 
-# -----------------------
-# Security reminders for production
-# -----------------------
-# - Set DEBUG=False in production (DJANGO_DEBUG env var)
-# - Set a strong SECRET_KEY in env
-# - Restrict ALLOWED_HOSTS to your domain(s)
-# - Use HTTPS (SECURE_SSL_REDIRECT, SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)
 if not DEBUG:
-    # Basic recommended production flags — uncomment if you want to enable them
-    # SECURE_SSL_REDIRECT = True
+
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    # HSTS settings (enable if you serve only via HTTPS)
-    # SECURE_HSTS_SECONDS = 3600
-    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    # SECURE_HSTS_PRELOAD = True
 
-# -----------------------
-# Optional: Email settings for sending notifications (set env vars in production)
-# -----------------------
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 25) or 25)
@@ -184,9 +158,6 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "False").lower() in ("1", "true", "yes")
 
-# -----------------------
-# Print a small startup hint (useful when debugging)
-# -----------------------
 if DEBUG:
     print(">>> Running with DEBUG=True. Make sure to set DJANGO_DEBUG=False in production and configure SECRET_KEY, DATABASE_URL, and ALLOWED_HOSTS.")
 
