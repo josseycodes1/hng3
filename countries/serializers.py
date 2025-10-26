@@ -6,6 +6,12 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = '__all__'
         read_only_fields = ['id', 'estimated_gdp', 'last_refreshed_at']
+        
+        extra_kwargs = {
+            'name': {'error_messages': {'blank': 'is required', 'null': 'is required'}},
+            'population': {'error_messages': {'null': 'is required'}},
+            'currency_code': {'error_messages': {'blank': 'is required', 'null': 'is required'}},
+        }
 
     def validate(self, data):
         errors = {}
