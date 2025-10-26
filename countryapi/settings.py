@@ -103,8 +103,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": int(os.environ.get("DRF_PAGE_SIZE", 50)),
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "PAGE_SIZE": int(os.environ.get("DRF_PAGE_SIZE", 50)),
     'EXCEPTION_HANDLER': 'countries.exceptions.custom_exception_handler',
 }
 
